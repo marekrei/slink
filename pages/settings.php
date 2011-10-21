@@ -30,6 +30,16 @@ if(isset($_POST['editing']))
 		Config::set("create_mirror_default", 1);
 	else
 		Config::set("create_mirror_default", 0);
+
+	if(isset($_POST['allow_tags']) && $_POST['allow_tags'] != null)
+		Config::set("allow_tags", 1);
+	else
+		Config::set("allow_tags", 0);
+
+	if(isset($_POST['allow_sharing']) && $_POST['allow_sharing'] != null)
+		Config::set("allow_sharing", 1);
+	else
+		Config::set("allow_sharing", 0);
 		
 	if(isset($_POST['short_url_length']) && $_POST['short_url_length'] != null && intval($_POST['short_url_length']) > 0)
 		Config::set("short_url_length", intval($_POST['short_url_length']));
@@ -75,73 +85,114 @@ Messenger::show();
 <div id="settings" class="form_layout">
 <form action="" method="post" enctype="multipart/form-data">
 <?php /* 
-	<div>
+	<div class="row">
 		<label for="url_prefix">Url prefix:</label> 
+		<div class="data">
 		<input type="text" name="url_prefix" value="<?php print Config::get("url_prefix"); ?>" id="url_prefix" />
+		</div>
 	</div>
 */ ?>
-	<div>
+	<div class="row">
 		<label for="allow_links">Allow links:</label> 
-		<input type="checkbox" name="allow_links" value="true" id="allow_links" <?php print (Config::get("allow_links")?"checked=\"checked\"":""); ?>/>
+		<div class="data">
+			<input type="checkbox" name="allow_links" value="true" id="allow_links" <?php print (Config::get("allow_links")?"checked=\"checked\"":""); ?>/>
+		</div>
 	</div>	
-	<div>
+	<div class="row">
 		<label for="allow_files">Allow files:</label> 
-		<input type="checkbox" name="allow_files" value="true" id="allow_files" <?php print (Config::get("allow_files")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="allow_files" value="true" id="allow_files" <?php print (Config::get("allow_files")?"checked=\"checked\"":""); ?>/></div>
 	</div>		
-	<div>
+	<div class="row">
 		<label for="allow_link_passwords">Allow passwords on links:</label> 
-		<input type="checkbox" name="allow_link_passwords" value="true" id="allow_link_passwords" <?php print (Config::get("allow_link_passwords")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="allow_link_passwords" value="true" id="allow_link_passwords" <?php print (Config::get("allow_link_passwords")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="allow_mirror">Allow mirrors:</label> 
-		<input type="checkbox" name="allow_mirror" value="true" id="allow_mirror" <?php print (Config::get("allow_mirror")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="allow_mirror" value="true" id="allow_mirror" <?php print (Config::get("allow_mirror")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="allow_mirror">Always mirror:</label> 
-		<input type="checkbox" name="always_mirror" value="true" id="always_mirror" <?php print (Config::get("always_mirror")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="always_mirror" value="true" id="always_mirror" <?php print (Config::get("always_mirror")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="create_mirror_default">Mirror by default:</label> 
-		<input type="checkbox" name="create_mirror_default" value="true" id="create_mirror_default" <?php print (Config::get("create_mirror_default")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="create_mirror_default" value="true" id="create_mirror_default" <?php print (Config::get("create_mirror_default")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
+		<label for="allow_tags">Allow tags:</label> 
+		<div class="data"><input type="checkbox" name="allow_tags" value="true" id="allow_mirror" <?php print (Config::get("allow_tags")?"checked=\"checked\"":""); ?>/></div>
+	</div>
+	<div class="row">
+		<label for="allow_tags">Allow sharing:</label> 
+		<div class="data"><input type="checkbox" name="allow_sharing" value="true" id="allow_sharing" <?php print (Config::get("allow_sharing")?"checked=\"checked\"":""); ?>/></div>
+	</div>
+	<div class="row">
 		<label for="short_url_random">Random short URL:</label> 
-		<input type="checkbox" name="short_url_random" value="true" id="short_url_random" <?php print (Config::get("short_url_random")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="short_url_random" value="true" id="short_url_random" <?php print (Config::get("short_url_random")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="short_url_length">Short URL default length:</label> 
-		<input type="text" name="short_url_length" value="<?php print Config::get("short_url_length"); ?>" id="short_url_length" />
+		<div class="data"><input type="text" name="short_url_length" value="<?php print Config::get("short_url_length"); ?>" id="short_url_length" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="short_url_allowed_characters">Characters in short URL:</label> 
-		<input type="text" name="short_url_allowed_characters" value="<?php print Config::get("short_url_allowed_characters"); ?>" id="short_url_allowed_characters" />
+		<div class="data"><input type="text" name="short_url_allowed_characters" value="<?php print Config::get("short_url_allowed_characters"); ?>" id="short_url_allowed_characters" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="items_per_page">Items per page:</label> 
-		<input type="text" name="items_per_page" value="<?php print Config::get("items_per_page"); ?>" id="items_per_page" />
+		<div class="data"><input type="text" name="items_per_page" value="<?php print Config::get("items_per_page"); ?>" id="items_per_page" /></div>
 	</div>
 	<div>
 		<label for="enable_thumbnails">Enable file thumbnails:</label> 
-		<input type="checkbox" name="enable_thumbnails" value="true" id="enable_thumbnails" <?php print (Config::get("enable_thumbnails")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="enable_thumbnails" value="true" id="enable_thumbnails" <?php print (Config::get("enable_thumbnails")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="time_format">Time format:</label> 
-		<input type="text" name="time_format" value="<?php print Config::get("time_format"); ?>" id="time_format" />
+		<div class="data"><input type="text" name="time_format" value="<?php print Config::get("time_format"); ?>" id="time_format" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="allow_mirror">Debugging mode:</label> 
-		<input type="checkbox" name="debug" value="true" id="debug" <?php print (Config::get("debug")?"checked=\"checked\"":""); ?>/>
+		<div class="data"><input type="checkbox" name="debug" value="true" id="debug" <?php print (Config::get("debug")?"checked=\"checked\"":""); ?>/></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="version">Version:</label> 
+		<div class="data">
 		<div id="version"  style="display:inline;">
 			<?php print Config::get("version"); ?>
 			<button id="checkForUpdate">Check for update</button>
 		</div>
+		</div>
 	</div>
-	<div>
+<?php
+/*
+Bookmarklet in a more readable version:
+javascript:(
+	function(){
+		alert('hey');
+		var u = 'http://www.siineiolekala.net/slink/demo/index.php?u=' + encodeURIComponent(document.location.href);
+		a=function(){
+			if(!window.open(u))
+				document.location.href=u;
+		};
+		if(/Firefox/.test(navigator.userAgent))
+			setTimeout(a,0);
+		else a();
+		void(0);
+	}
+)()
+*/
+?>
+	<div class="row">
+		<label for="version">Bookmarklet:</label> 
+		<div class="data">
+		<a onclick="alert('Drag this link to your bookmarks.'); return false;" href="javascript:(%20function(){var%20u%20=%20'http://www.siineiolekala.net/slink/demo/index.php?u='%20+%20encodeURIComponent(document.location.href);%20a=function(){%20if(!window.open(u))%20document.location.href=u;%20};%20if(/Firefox/.test(navigator.userAgent))%20setTimeout(a,0);%20else%20a();%20void(0);%20}%20)()">Slink</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="data">
 		<input type="hidden" name="editing" value="true" />
 		<input type="submit" value="Save" class="button" />
+		</div>
 	</div>
 </form>
 </div>

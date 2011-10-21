@@ -30,30 +30,48 @@ if($addedLink)
 ?>
 <h2>Your link</h2>
 <div id="main_done" class="form_layout">
-	<div>
+	<div class="row">
 		<label>Title:</label>
-		<?php print $link->title; ?>
+		<div class="data"><?php print $link->title; ?></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="short_url_done">URL:</label>
-		<input type="text" readonly="readonly" name="short_url_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>" id="short_url_done" />
+		<div class="data">		
+			<input type="text" readonly="readonly" name="short_url_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>" id="short_url_done" />
+		</div>
 	</div>
 	
 <?php 
 if($link->isMirrored())
 {
 ?>
-	<div>
+	<div class="row">
 		<label for="mirror_done">Mirror:</label>
-		<input type="text" readonly="readonly" name="mirror_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>!" id="mirror_done" />
+		<div class="data">
+			<input type="text" readonly="readonly" name="mirror_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>!" id="mirror_done" />
+		</div>
 	</div>
 <?php 
 }
 ?>
 <form action="index.php?page=editlink&id=<?php print $link->id; ?>" method="post" enctype="multipart/form-data">
-	<div>
-		<input type="submit" value="Edit" class="button" />
+	<div class="row">
+		<div class="data"><input type="submit" value="Edit" class="button" /></div>
 	</div>
+<?php
+if(Config::get("allow_sharing")){
+?>
+	<div class="row" id="sharebar">
+		<div class="data">
+		<a href="http://www.facebook.com/sharer/sharer.php?u=<?php print rawurlencode(Config::get("url_prefix").$link->short_url); ?>" target="_blank"><img src="img/media/facebook.png" alt="Facebook" /></a>
+		<a href="http://twitter.com/home?status=<?php print rawurlencode(Config::get("url_prefix").$link->short_url); ?>" target="_blank"><img src="img/media/twitter.png" alt="Twitter" /></a>
+		<a href="mailto:?subject=<?php print rawurlencode($link->title);?>&body=<?php print rawurlencode($link->title);?>
+ <?php print rawurlencode(Config::get("url_prefix").$link->short_url);?>" target="_blank"><img src="img/media/mail.png" alt="E-Mail" /></a>
+		</div>
+	</div>
+<?php
+}
+?>
 </form>
 </div>
 
@@ -65,30 +83,33 @@ if(!$addedLink)
 ?>
 
 <h2>Create new link</h2>
-<div id="main" class="form_layout">
+
 <form action="" method="post" enctype="multipart/form-data">
-	<div>
+<div id="main" class="form_layout">
 <?php 
 	if(Config::get("allow_links")){
+	$u = null;
+	if(isset($_GET['u']) && strlen($_GET['u']) > 0)
+		$u = htmlspecialchars($_GET['u']);
 ?>
-	<div>
+	<div class="row">
 		<label for="long_url">URL:</label>
-		<input type="text" name="long_url" value="" id="long_url" />
+		<div class="data"><input type="text" name="long_url" value="<?php print $u!=null?$u:""; ?>" id="long_url" /></div>
 	</div>
 <?php 
 	}
 	if(Config::get("allow_files")){
 ?>
-	<div>
+	<div class="row">
 		<label for="upload_file">Upload file:</label>
-		<input type="file" name="upload_file" id="upload_file" /> 
+		<div class="data"><input type="file" name="upload_file" id="upload_file" /></div>
 	</div>
 <?php 
 	}
 ?>
-	<div>
+	<div class="row">
 		<label for="short_url">Short URL (opt):</label>
-		<input type="text" name="short_url" value="" id="short_url" />
+		<div class="data"><input type="text" name="short_url" value="" id="short_url" />
 <?php /*
 		<input type="text" name="short_url" value="<?php print $newShortUrl; ?>" id="short_url" class="initial" />
 		<input type="hidden" id="url_prefix" name="url_prefix" value="<?php print Config::get("url_prefix"); ?>" />
@@ -96,22 +117,35 @@ if(!$addedLink)
 		<div id="short_url_preview"></div>
 	*/
 ?>
+		</div>
 	</div>
 <?php 
 	if(Config::get("allow_link_passwords")){
 ?>
-	<div>
+	<div class="row">
 		<label for="link_password">Link Password (opt):</label>
-		<input type="password" name="link_password" value="" id="link_password" />
+		<div class="data">
+			<input type="password" name="link_password" value="" id="link_password" />
+		</div>
+	</div>
+<?php 
+	}
+	if(Config::get("allow_tags")){
+?>
+	<div class="row">
+		<label for="link_tags">Tags:</label>
+		<div class="data"><input type="text" name="link_tags" value="" id="link_tags" /></div>
 	</div>
 <?php 
 	}
 	if(Config::get("allow_mirror") && !Config::get("always_mirror")){
 ?>
-	<div>
+	<div class="row">
 		<label for="link_password">Create mirror:</label>
-		<input type="radio" name="create_mirror" value="no" <?php print Config::isTrue("create_mirror_default")?"":"checked=\"checked\" "; ?>/> No 
-		<input type="radio" name="create_mirror" value="yes" <?php print Config::isTrue("create_mirror_default")?"checked=\"checked\" ":""; ?>/> Yes
+		<div class="data">
+			<input type="radio" name="create_mirror" value="no" <?php print Config::isTrue("create_mirror_default")?"":"checked=\"checked\" "; ?>/> No 
+			<input type="radio" name="create_mirror" value="yes" <?php print Config::isTrue("create_mirror_default")?"checked=\"checked\" ":""; ?>/> Yes
+		</div>
 	</div>
 <?php 
 	}
@@ -119,36 +153,38 @@ if(!$addedLink)
 	{
 		$user = Auth::getUser();
 ?>
-	<div>
+	<div class="row">
 		<label>Username:</label>
-		<?php print $user->username; ?>
+		<div class="data"><?php print $user->username; ?></div>
 	</div>
 <?php 
 	}
 	else 
 	{
 ?>
-	<div>
+	<div class="row">
 		<label for="username">Username:</label>
-		<input type="text" name="username" value="" id="username" />
+		<div class="data"><input type="text" name="username" value="" id="username" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="password">Password:</label>
-		<input type="password" name="password" value="" id="password" />
-		<input type="checkbox" name="remember_me" value="true" checked="checked" /> Remember me
+		<div class="data">
+			<input type="password" name="password" value="" id="password" />
+			<input type="checkbox" name="remember_me" value="true" checked="checked" /> Remember me
+		</div>
 	</div>
 <?php 
 	}
 ?>
-	<div>
-		<input type="submit" value="Create" class="button" />
-		<img src="img/loading.gif" alt="Loading" class="loading hidden" />
+	<div class="row">
+		<div class="data">
+			<input type="submit" value="Create" class="button" />
+			<img src="img/loading.gif" alt="Loading" class="loading hidden" />
+		</div>
 	</div>
-
-	
-	</div>
-</form>
 </div>
+</form>
+
 <?php 
 }
 ?>

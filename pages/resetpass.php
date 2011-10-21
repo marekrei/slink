@@ -56,12 +56,12 @@ Messenger::show();
 if($enter_new_pass){
 ?>
 <form action="" method="post" enctype="multipart/form-data">
-	<div>
+	<div class="row">
 		<label for="password">New password:</label>
-		<input type="password" name="password" value="" id="password" />
+		<div class="data"><input type="password" name="password" value="" id="password" /></div>
 	</div>
-	<div>
-		<input type="submit" value="Save" class="button" />
+	<div class="row">
+		<div class="data"><input type="submit" value="Save" class="button" /></div>
 	</div>
 </form>
 <?php 
@@ -69,12 +69,12 @@ if($enter_new_pass){
 else {
 ?>
 <form action="" method="post" enctype="multipart/form-data">
-	<div>
+	<div class="row">
 		<label for="email">E-mail:</label>
-		<input type="text" name="email" value="" id="email" />
+		<div class="data"><input type="text" name="email" value="" id="email" /></div>
 	</div>
-	<div>
-		<input type="submit" value="Send message" class="button" />
+	<div class="row">
+		<div class="data"><input type="submit" value="Send message" class="button" /></div>
 	</div>
 </form>
 <?php 

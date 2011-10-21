@@ -50,33 +50,35 @@ if(isset($_GET['page']) && $_GET['page'] == "edituser"
 <h2>Edit user</h2>
 <div id="edituser" class="form_layout">
 <form action="" method="post" enctype="multipart/form-data">
-
-	
-	<div>
+	<div class="row">
 		<label for="username">Username:</label> 
+		<div class="data">
 		<input type="text" name="username" value="<?php print $user->username; ?>" id="username" <?php if(!Auth::isAllowedAdmin()) print "readonly=\"readonly\" "; ?>/>
+		</div>
 	</div>		
-	<div>
+	<div class="row">
 		<label for="password">New Password:</label>
-		<input type="password" name="password" value="" id="password" />
+		<div class="data"><input type="password" name="password" value="" id="password" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="email">E-mail:</label>
-		<input type="text" name="email" id="email" value="<?php print $user->email; ?>" /> 
+		<div class="data"><input type="text" name="email" id="email" value="<?php print $user->email; ?>" /> </div>
 	</div>
 <?php 
 if(Auth::isAllowedAdmin()) {
 ?>
-	<div>
+	<div class="row">
 		<label for="allowed_admin">Is admin:</label>
-		<input type="checkbox" name="allowed_admin" value="true" id="allowed_admin" <?php print $user->allowed_admin==1?"checked=\"checked\"":""; ?> />
+		<div class="data"><input type="checkbox" name="allowed_admin" value="true" id="allowed_admin" <?php print $user->allowed_admin==1?"checked=\"checked\"":""; ?> /></div>
 	</div>
 <?php 
 }
 ?>
-	<div>
+	<div class="row">
+		<div class="data">
 		<input type="hidden" name="editing" value="true" />
 		<input type="submit" value="Save" class="button" />
+		</div>
 	</div>
 	
 </form>

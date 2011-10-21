@@ -6,12 +6,12 @@ Messenger::show();
 
 <div id="gatekeeper" class="form_layout">
 <form action="index.php<?php if(isset($_GET['l'])) print "?l=".$_GET['l']; ?>" method="post" enctype="multipart/form-data">
-	<div>
+	<div class="row">
 		<label for="password">Password:</label>
-		<input type="password" name="password" value="" id="password" />
+		<div class="data"><input type="password" name="password" value="" id="password" /></div>
 	</div>
-	<div>
-		<input type="submit" value="Enter" class="button" />
+	<div class="row">
+		<div class="data"><input type="submit" value="Enter" class="button" /></div>
 	</div>
 </form>
 

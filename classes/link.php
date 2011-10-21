@@ -15,6 +15,8 @@ class Link {
 	var $time_created;
 	var $time_accessed;
 	var $count_accessed;
+	var $tags;
+	var $tags_new;
 	
 	function __construct() {
 		$this->id = -1;
@@ -31,6 +33,8 @@ class Link {
 		$this->time_created = null;
 		$this->time_accessed = null;
 		$this->count_accessed = null;
+		$this->tags = array();
+		$this->tags_new = array();
 		
 	}
 	
@@ -152,10 +156,22 @@ class Link {
 			$this->title = Mirror::getTitle($this);
 			if($this->title == null) {
 				if($this->type == 0)
-					$this->title = basename($this->long_url);
+					$this->title = rawurldecode(basename($this->long_url));
 				else if($this->type == 1)
 					$this->title = $this->file;
 			}
+		}
+		
+		// Parsing the tags
+		if(isset($_POST['link_tags']) && strlen($_POST['link_tags']) > 0){
+			$tag_names = explode(",", $_POST['link_tags']);
+			foreach($tag_names as $tag_name){
+				if(strlen(trim($tag_name)) > 0 && !in_array(trim($tag_name), $this->tags) && !in_array(trim($tag_name), $this->tags_new)){
+					$this->tags[] = trim($tag_name);
+					$this->tags_new[] = trim($tag_name);
+				}
+			}
+			sort($this->tags);
 		}
 		return true;
 	}
@@ -233,7 +249,7 @@ class Link {
 		$url = str_replace('http://http://', 'http://', $url);
 		if ( !preg_match('!^([a-zA-Z]+://)!', $url))
 			$url = 'http://'.$url;
-		
+		$url = str_replace(" ", "%20", $url);
 		$url = preg_replace('|[^a-z0-9-~+_.?\[\]\^#=!&;,/:%@$\|*\'"()\\x80-\\xff]|i', '', $url );
 		$strip = array('%0d', '%0a', '%0D', '%0A');
 		$url = self::deep_replace($strip, $url);

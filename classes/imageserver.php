@@ -196,5 +196,14 @@ class ImageServer
 		else 
 			return $dir.self::$file_types["unknown"];
 	}
+	
+	public static function getProtectedIcon($extension)
+	{
+		$dir = "img/icons/protected/";
+		if(key_exists($extension, self::$file_types))
+		return $dir.self::$file_types[$extension];
+		else
+		return $dir.self::$file_types["unknown"];
+	}
 }
 ?>

@@ -25,10 +25,12 @@ if(!DB::isInstalled())
 	DB::install(md5($password));
 	FileManager::initUser("admin");
 	FileManager::createHtAccess(".htaccess");
-	print "Script installed<br \>\n";
+	print "<div style=\"text-aling:center\">";
+	print "Script successfully installed<br \>\n";
 	print "Username: admin<br \>\n";
 	print "Password: ".$password."<br \>\n";
 	print "<a href=\"index.php\">Go to main page</a>";
+	print "<div>";
 }
 
 ?>

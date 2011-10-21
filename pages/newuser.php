@@ -28,35 +28,37 @@ if($_USER != null && $_USER->allowed_admin)
 <h2>New user</h2>
 <div id="newuser" class="form_layout">
 <form action="" method="post" enctype="multipart/form-data">	
-	<div>
+	<div class="row">
 		<label for="username">Username:</label> 
-		<input type="text" name="username" value="" id="username" />
+		<div class="data"><input type="text" name="username" value="" id="username" /></div>
 	</div>		
-	<div>
+	<div class="row">
 		<label for="password">Password:</label>
-		<input type="text" name="password" value="" id="password" />
+		<div class="data"><input type="text" name="password" value="" id="password" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="email">E-mail:</label>
-		<input type="text" name="email" id="email" /> 
+		<div class="data"><input type="text" name="email" id="email" /></div>
 	</div>
 <!--
-	<div>
+	<div class="row">
 		<label for="allowed_links">Can add links:</label>
-		<input type="checkbox" name="allowed_links" id="allowed_links" value="true" checked="checked" />
+		<div class="data"><input type="checkbox" name="allowed_links" id="allowed_links" value="true" checked="checked" /></div>
 	</div>
-	<div>
+	<div class="row">
 		<label for="allowed_files">Can add files:</label>
-		<input type="checkbox" name="allowed_files" value="true" checked="checked" />
+		<div class="data"><input type="checkbox" name="allowed_files" value="true" checked="checked" /></div>
 	</div>
 -->
-	<div>
+	<div class="row">
 		<label for="allowed_admin">Is admin:</label>
-		<input type="checkbox" name="allowed_admin" value="true" id="allowed_admin" />
+		<div class="data"><input type="checkbox" name="allowed_admin" value="true" id="allowed_admin" /></div>
 	</div>
-	<div>
-		<input type="hidden" name="newuser" value="true" />
-		<input type="submit" value="Create" class="button" />
+	<div class="row">
+		<div class="data">
+			<input type="hidden" name="newuser" value="true" />
+			<input type="submit" value="Create" class="button" />
+		</div>
 	</div>
 </form>
 </div>

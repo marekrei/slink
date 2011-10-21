@@ -52,6 +52,12 @@ if($_USER != null)
 	$type = -1;
 	if(isset($_GET['type']) && (intval($_GET['type']) == 0 || intval($_GET['type'] == 1)))
 		$type =  intval($_GET['type']);
+	
+	$tag_name = "";
+	if(isset($_GET['tag']))
+		$tag_name = $_GET['tag'];
+	
+	$links = DB::getLinks($user_id, $type, null, $tag_name, $sort_by, $sort_as, $pnum, $items_per_pnum);
 		
 ?>
 <div id="submenu">
@@ -82,8 +88,24 @@ print "</h2>";
 ?>
 
 <div id="links">
+<?php
+if(Config::get("allow_tags")){
+	$tags = DB::getAllTags();
+	if(count($tags) > 0){
+		print "<form action=\"?page=links\" method=\"get\">";
+		print "<div id=\"tagfilter\">Filter by tag: ";
+		print "<input type=\"hidden\" name=\"page\" value=\"links\" />";
+		print "<select name=\"tag\" id=\"tag\">";
+		print "<option value=\"\">-</option>";
+		foreach($tags as $tag)
+			print "<option value=\"".htmlspecialchars($tag)."\" ".($tag_name==$tag?"selected=\"selected\"":"").">".htmlspecialchars($tag)."</option>";
+		print "</select>";
+		print "<input type=\"submit\" value=\"Go\" />";
+		print "</div>";
+		print "</form>";
+	}
+}
 
-<?php 
 if(!Auth::isMobile()){
 	print "<table class=\"table_layout\">";
 	print "<tr class=\"head\">";
@@ -127,6 +149,7 @@ if(!Auth::isMobile()){
 			print "<a href=\"?page=links&user=$user_id&type=$type&sort_by=file_size&sort_as=asc\">Size</a>";
 		print "</th>";
 	}
+	/*
 	else if($type != 1) {
 		print "<th class=\"password\">"; 
 		if($sort_by == "password" && $sort_as == "asc")
@@ -135,6 +158,7 @@ if(!Auth::isMobile()){
 			print "<a href=\"?page=links&user=$user_id&type=$type&sort_by=password&sort_as=asc\">PW</a>";
 		print "</th>";
 	}
+	*/
 	print "<th class=\"username\">";
 	if($sort_by == "username" && $sort_as == "asc")
 		print "<a href=\"?page=links&user=$user_id&type=$type&sort_by=username&sort_as=desc\">User</a>";
@@ -159,16 +183,26 @@ else {
 
 
 
-$links = DB::getLinks($user_id, $type, null, $sort_by, $sort_as, $pnum, $items_per_pnum);
+
 $row = "one";
 foreach($links as $link)
 {
+	if($link->type == 1){
+		if($link->password != null && strlen($link->password) > 0)
+			$icon = $icon = "<img src=\"".ImageServer::getProtectedIcon($link->file_type)."\" alt=\"".$link->file_type."\" />";
+		else
+			$icon = "<img src=\"".ImageServer::getIcon($link->file_type)."\" alt=\"".$link->file_type."\" />";
+	}
+	else{
+		if($link->password != null && strlen($link->password) > 0)
+			$icon = "<img src=\"img/icons/protected/icon_link.png\" alt=\"link\" />";
+		else 
+			$icon = "<img src=\"img/icons/icon_link.png\" alt=\"link\" />";
+	}
+	
 	if(!Auth::isMobile()){
 		print "<tr class=\"$row\">";
-		if($link->type == 1)
-			print "<td><img src=\"".ImageServer::getIcon($link->file_type)."\" alt=\"".$link->file_type."\" /></td>";
-		else 
-			print "<td><img src=\"img/icon_link.png\" alt=\"link\" /></td>";
+		print "<td>".$icon."</td>";
 	
 		print "<td><a class=\"title".($link->isValidForThumb()?" thumb":"")."\" href=\"".$link->getMainUrl()."\">".$link->title."</a>
 				<a class=\"long_url".($link->isValidForThumb()?" thumb":"")."\" href=\"".$link->getMainUrl()."\">".$link->getMainUrl()."</a></td>";
@@ -178,12 +212,12 @@ foreach($links as $link)
 			print "<td>".formatFileSize($link->file_size)."</td>";
 		}
 		
-		if($type != 1) {
+		/*if($type != 1) {
 			if($link->password != null && strlen($link->password) > 0)
 				print "<td><img src=\"img/icon_passworded.png\" alt=\"passworded\" /></td>";
 			else
 				print "<td><img src=\"img/icon_public.png\" alt=\"public\" /></td>";
-		}
+		}*/
 		print "<td>".$link->username."</td>";
 		print "<td>".date(Config::get("time_format"), $link->time_created)."</td>";
 		print "<td><a href=\"?page=editlink&id=".$link->id."\" class=\"editlink\"><img src=\"img/icon_edit3.png\" alt=\"edit\" /></a> <a href=\"?page=links&user=$user_id&type=$type&del=".$link->id."\"  class=\"deletelink\"><img src=\"img/icon_delete3.png\" alt=\"delete\" /></a><span class=\"hidden link_id\">".$link->id."</span></td>";
@@ -191,7 +225,7 @@ foreach($links as $link)
 	}
 	else {
 		print "<li class=\"$row\"><a href=\"?page=editlink&id=".$link->id."\">";
-		print "<img src=\"".ImageServer::getIcon($link->file_type)."\" alt=\"".$link->file_type."\" />";
+		print $icon;
 		print "<span class=\"title\">".$link->title;
 		if($link->type == 1)
 			print " (".formatFileSize($link->file_size).")";
@@ -215,12 +249,12 @@ else
 ?>
 <div class="pagelinks">
 <?php 
-	$linksCount = DB::getLinksCount($user_id, $type, null, $sort_by, $sort_as);
+	$linksCount = DB::getLinksCount($user_id, $type, null, $tag_name, $sort_by, $sort_as);
 	$pcount = ceil($linksCount / $items_per_pnum);
 	for($i = 0; $i < $pcount; $i++)
 	{
 		if($i != $pnum)
-			print "<a href=\"?page=links&user=$user_id&type=$type&sort_by=".$sort_by."&sort_as=".$sort_as."&pnum=".$i."\">";
+			print "<a href=\"?page=links&user=$user_id&type=$type&tag=".rawurlencode($tag_name)."&sort_by=".$sort_by."&sort_as=".$sort_as."&pnum=".$i."\">";
 		print "<span>".($i+1)."</span>";
 		if($i != $pnum)
 			print "</a>";

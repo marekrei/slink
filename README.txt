@@ -4,9 +4,9 @@
  *
  *             Author : Marek Rei (marek ät siineiolekala dot net)
  *
- *             Version : 0.2 (beta)
+ *             Version : 0.4 (beta)
  *
- *             Last update: 02.10.2011
+ *             Last update: 21.10.2011
  *
  *             Homepage: www.siineiolekala.net/slink/
  *
@@ -24,9 +24,11 @@
  *   It has NO WARRANTY and when you use it, the author is not responsible
  *   for how it works (or doesn't).
  *   
- *   The icon images are designed by Mark James (http://www.famfamfam.com) 
- *   and distributed under the Creative Commons Attribution 3.0 License.
+ *   The icon images belong to Tango Icon Library
+ *   http://tango.freedesktop.org/Tango_Icon_Library
  *
+ *   Social media icons by ristaumedia
+ *   http://ristaumedia.deviantart.com/art/Social-Media-Icons-Volume-2-176762480
  *
  *   Manual
  *

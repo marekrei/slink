@@ -3,7 +3,7 @@ class Config {
 	
 	static $conf_int = array("items_per_page", "short_url_length");
 	static $conf_string = array("url_prefix", "time_format", "short_url_allowed_characters", "sequential_short_url");
-	static $conf_boolean = array("allow_links", "allow_files", "allow_link_passwords", "allow_mirror", "create_mirror_default", "debug", "enable_thumbnails", "short_url_random", "always_mirror");
+	static $conf_boolean = array("allow_links", "allow_files", "allow_link_passwords", "allow_mirror", "create_mirror_default", "debug", "enable_thumbnails", "short_url_random", "always_mirror", "allow_tags", "allow_sharing");
 	
 	public static function init() {
 		global $_CONFIG;

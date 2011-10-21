@@ -259,7 +259,26 @@ class DB {
 			return null;
 			
 		$array = mysql_fetch_array($result);
-		$link = self::makeLinkFromArray($array);
+		$link = self::makeLinkFromArray($array);	
+		
+		$query2 = sprintf("SELECT %stagnames.name AS name, %stags.* FROM %stags LEFT JOIN %stagnames ON %stagnames.id=%stags.tag_id where %stags.link_id=%d order by name",
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safei($id));
+		
+		Messenger::addDebug("MYSQL: ".$query2);
+		$result2 = mysql_query($query2);
+		$tags = array();
+		while($data2 = mysql_fetch_array($result2)){
+			$tags[] = $data2['name'];
+		}
+		$link->tags = $tags;
+		
 		return $link;
 	}
 	
@@ -287,6 +306,19 @@ class DB {
 
 		mysql_query($query);
 		$link->id = mysql_insert_id();
+		
+		foreach($link->tags_new as $tag_name){
+			$tag_id = DB::getTagId($tag_name);
+			if($tag_id == null)
+				$tag_id = DB::createNewTag($tag_name);
+			$query_tag = sprintf("INSERT INTO %stags set link_id=%d, tag_id=%d",
+			DB::safes(Config::get("mysql_prefix")),
+			DB::safei($link->id),
+			DB::safei($tag_id));
+			Messenger::addDebug("MYSQL: ".$query_tag);
+			mysql_query($query_tag);
+		}
+		$link->tags_new = array();
 	}
 	
 	public static function editLink($link)
@@ -309,6 +341,19 @@ class DB {
 		Messenger::addDebug("MYSQL: ".$query);
 
 		mysql_query($query);
+		
+		foreach($link->tags_new as $tag_name){
+			$tag_id = DB::getTagId($tag_name);
+			if($tag_id == null)
+				$tag_id = DB::createNewTag($tag_name);
+			$query_tag = sprintf("INSERT INTO %stags set link_id=%d, tag_id=%d",
+			DB::safes(Config::get("mysql_prefix")),
+			DB::safei($link->id),
+			DB::safei($tag_id));
+			Messenger::addDebug("MYSQL: ".$query_tag);
+			mysql_query($query_tag);
+		}
+		$link->tags_new = array();
 	}
 	
 	public static function deleteLink($link)
@@ -322,7 +367,7 @@ class DB {
 		mysql_query($query);
 	}
 	
-	private static function makeLinksQuery($user, $type, $strquery)
+	private static function makeLinksQuery($user, $type, $strquery, $tag_name)
 	{
 		if(!is_int($user))
 			$user = -1;
@@ -339,29 +384,44 @@ class DB {
 		if($strquery != null)
 			$conditions[] = "(".DB::safes(Config::get("mysql_prefix"))."links.long_url LIKE '%".DB::safes($strquery)."%' OR ".DB::safes(Config::get("mysql_prefix"))."links.short_url LIKE '%".DB::safes($strquery)."%')";	
 		
-		$condition_string = null;
-		if(count($conditions) > 0)
-			$condition_string = implode(" AND ", $conditions);
+		
+		
+		
 		
 		$query = "SELECT ".DB::safes(Config::get("mysql_prefix"))."users.username as username, ".DB::safes(Config::get("mysql_prefix"))."links.* FROM ".DB::safes(Config::get("mysql_prefix"))."links ";
 		$query .= "LEFT JOIN ".DB::safes(Config::get("mysql_prefix"))."users ON ".DB::safes(Config::get("mysql_prefix"))."users.id=".DB::safes(Config::get("mysql_prefix"))."links.user ";
+		
+		if($tag_name != null && strlen(trim($tag_name)) > 0){
+			$tag_id = DB::getTagId($tag_name);
+			if($tag_id != null){
+				$query .= sprintf("JOIN %stags ON %slinks.id = %stags.link_id ",
+				DB::safes(Config::get("mysql_prefix")),
+				DB::safes(Config::get("mysql_prefix")),
+				DB::safes(Config::get("mysql_prefix")));
+				$conditions[] = sprintf("%stags.tag_id = %d", DB::safes(Config::get("mysql_prefix")), $tag_id);
+			}
+		}
+		
+		$condition_string = null;
+		if(count($conditions) > 0)
+			$condition_string = implode(" AND ", $conditions);
 		if($condition_string != null)
-			$query .= "where ".$condition_string." ";
+			$query .= "WHERE ".$condition_string." ";
 		return $query;
 	}
 	
-	public static function getLinksCount($user, $type, $strquery)
+	public static function getLinksCount($user, $type, $strquery, $tag_name)
 	{
-		$query = self::makeLinksQuery($user, $type, $strquery);
+		$query = self::makeLinksQuery($user, $type, $strquery, $tag_name);
 		$result = mysql_query($query);
 		if(!$result)
 			return 0;
 		return mysql_num_rows($result);
 	}
 	
-	public static function getLinks($user, $type, $strquery, $order_by, $order_as, $page, $limit)
+	public static function getLinks($user, $type, $strquery, $tag_name, $order_by, $order_as, $page, $limit)
 	{
-		$query = self::makeLinksQuery($user, $type, $strquery);
+		$query = self::makeLinksQuery($user, $type, $strquery, $tag_name);
 
 		$order_by = self::checkLinksOrderBy($order_by);
 		$order_as = self::checkOrderAs($order_as);
@@ -481,8 +541,7 @@ class DB {
 		return true;
 	}
 	
-	public static function isEmailAvailable($email)
-	{
+	public static function isEmailAvailable($email){
 		$query = sprintf("SELECT * FROM %susers where email='%s'",
 			DB::safes(Config::get("mysql_prefix")),
 			DB::safes($email));
@@ -496,8 +555,7 @@ class DB {
 		return true;
 	}
 	
-	public static function isInstalled()
-	{
+	public static function isInstalled(){
 		$query = sprintf("SELECT * FROM %susers LIMIT 1",
 				DB::safes(Config::get("mysql_prefix")));
 
@@ -506,9 +564,100 @@ class DB {
 			return false;
 		return true;
 	}
+
+	public static function getAllTags(){
+		$tagquery = sprintf("SELECT * FROM %stagnames order by name",
+		DB::safes(Config::get("mysql_prefix")));
+
+		$tagresult = mysql_query($tagquery);
+		$tags = array();
+		while($tagdata = mysql_fetch_array($tagresult)){
+			$tags[] = $tagdata['name'];
+		}
+
+		return $tags;
+	}
 	
-	public static function install($password)
-	{
+	public static function getTagId($tag_name){
+		$query = sprintf("SELECT * FROM %stagnames where name='%s'",
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes($tag_name));
+		
+		Messenger::addDebug("MYSQL: ".$query);
+		
+		$result = mysql_query($query);
+		if(!$result || mysql_num_rows($result) == 0)
+			return NULL;
+		else {
+			$data = mysql_fetch_array($result);
+			return $data['id'];
+		}
+	}
+	
+	public static function createNewTag($tag_name){
+		$query = sprintf("INSERT INTO %stagnames SET name='%s'",
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes($tag_name));
+		
+		Messenger::addDebug("MYSQL: ".$query);
+		
+		$result = mysql_query($query);
+		
+		return mysql_insert_id();
+	}
+	
+	public static function deleteTag($tag_name, $link_id){
+		$query = sprintf("SELECT * FROM %stagnames where name='%s'",
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safes($tag_name));
+		$result = mysql_query($query);
+		
+		if(!$result || mysql_num_rows($result) == 0)
+			return NULL;
+		else {
+			$data = mysql_fetch_array($result);
+			$tag_id = $data['id'];
+			
+			$query2 = sprintf("DELETE FROM %stags where tag_id=%d and link_id=%d",
+			DB::safes(Config::get("mysql_prefix")),
+			DB::safei($tag_id),
+			DB::safei($link_id));
+			Messenger::addDebug("MYSQL: ".$query2);
+			mysql_query($query2);
+			
+			$query3 = sprintf("SELECT * FROM %stags where tag_id=%d",
+			DB::safes(Config::get("mysql_prefix")),
+			DB::safei($tag_id));
+			Messenger::addDebug("MYSQL: ".$query3);
+			
+			if(mysql_num_rows(mysql_query($query3)) == 0){
+				$query4 = sprintf("DELETE FROM %stagnames where id=%d",
+				DB::safes(Config::get("mysql_prefix")),
+				DB::safei($tag_id));
+				Messenger::addDebug("MYSQL: ".$query4);
+				mysql_query($query4);
+			}
+		}
+	}
+	
+	public static function getTagNames(){
+		$query = sprintf("SELECT * FROM %stagnames ",
+				DB::safes(Config::get("mysql_prefix")));
+		
+		Messenger::addDebug("MYSQL: ".$query);
+		
+		$result = mysql_query($query);
+		if(!$result || mysql_num_rows($result) == 0)
+			return array();
+		
+		$tagnames = array();
+		while($array = mysql_fetch_array($result)){
+			$tagnames['name'] = $tagnames['id'];
+		}
+		return $tagnames;
+	}
+	
+	public static function install($password){
 		$query = sprintf("CREATE TABLE IF NOT EXISTS `%ssettings` (
 					  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `value` text COLLATE utf8_unicode_ci NOT NULL,
@@ -532,7 +681,7 @@ class DB {
 					  `file_size` bigint(32) NOT NULL,
 					  `file_type` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  PRIMARY KEY (`id`)
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;",
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
 					DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
 		
@@ -547,9 +696,27 @@ class DB {
 					  `reset_hash` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `reset_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 					  PRIMARY KEY (`id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;",
+					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
 					DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
+
+		$query = sprintf("CREATE TABLE IF NOT EXISTS `%stagnames` (
+					  `id` int(11) NOT NULL AUTO_INCREMENT,
+					  `name` varchar(32) NOT NULL,
+					  PRIMARY KEY (`id`),
+					  KEY `id` (`id`)
+					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci",
+					DB::safes(Config::get("mysql_prefix")));
+		mysql_query($query);
+
+		$query = sprintf("CREATE TABLE IF NOT EXISTS `%stags` (
+				  `id` int(11) NOT NULL AUTO_INCREMENT,
+				  `link_id` int(11) NOT NULL,
+				  `tag_id` int(11) NOT NULL,
+				  PRIMARY KEY (`id`),
+				  KEY `id` (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;", 
+				DB::safes(Config::get("mysql_prefix")));
 		
 		$query = sprintf("INSERT INTO `%susers` (`id`, `username`, `password`, `email`, `time_created`, `time_accessed`, `allowed_admin`) VALUES
 					(1, 'admin', '%s', '', now(), now(), 1);",
@@ -562,8 +729,8 @@ class DB {
 					('allow_files', '1'),
 					('items_per_page', '20'),
 					('allow_link_passwords', '1'),
-					('time_format', 'j M Y'),
-					('short_url_length', '6'),
+					('time_format', 'j M Y h:m'),
+					('short_url_length', '2'),
 					('short_url_allowed_characters', '123467890abcdefghijklmnopqrstuvwxyz'),
 					('allow_mirror', '1'),
 					('always_mirror', '1'),
@@ -571,9 +738,11 @@ class DB {
 					('sequential_short_url', ''),
 					('debug', '0'),
 					('short_url_random', '0'),
-					('enable_thumbnails', '1');",
+					('enable_thumbnails', '1'),
+					('allow_tags', '1'),
+					('allow_sharing', '1');",
 					DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
-	}	
+	}
 }
 ?>

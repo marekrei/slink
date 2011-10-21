@@ -109,16 +109,21 @@ div.form_layout{
 	margin:0 auto;
 }
 
-div#settings.form_layout {
-	max-width:750px;
-}
-
 div.form_layout label{
 	width:200px;
 	display:inline-block;
 	text-align:right;
 	margin-right:4px;	
 	font-size:medium;
+	float:left;
+}
+
+div.form_layout div.row{
+	clear:both;
+}
+
+div.form_layout div.data{
+	margin-left:210px;
 }
 
 div.form_layout input{
@@ -131,16 +136,8 @@ div.form_layout input.checkbox{
 	border:0;
 }
 
-div.form_layout input.button {
-	margin-left:210px;
-}
-
 div.form_layout div {
 	margin-bottom:5px;	
-}
-
-div.form_layout input#long_url {
-	width:300px;	
 }
 
 div.form_layout input#short_url.initial {
@@ -153,26 +150,39 @@ div.form_layout #short_url_preview {
 	color:#CCCCCC;	
 }
 
-div.form_layout input#url_prefix {
+div.form_layout input[type=text] {
 	width:300px;
 }
 
-div.form_layout input#short_url_done, div.form_layout input#mirror_done {
-	width:300px;
+div#login input#username{
+	width:150px;
 }
 
-div.form_layout input#long_url_done, div.form_layout input#title {
-	width:300px;
+/* TAGS */
+
+div.deltag{
+	border-radius: 5px;
+	background-color:#eaeaea;
+	font-size:small;
+	padding:0 3px;
+	display:inline;
 }
 
-#settings input#short_url_allowed_characters {
-	width:300px;
+div.deltag a{
+	font-weight:bold;
+	font-size:small;
+	display:inline;
+	margin:2px;
+	color:#b3b3b3;
 }
 
-#settings label {
-	width:300px;
+div.deltag a:hover{
+	color:#6a6a6a;
 }
 
+div#tagfilter{
+	text-align:right;
+}
 
 /* TABLE */
 
@@ -296,10 +306,19 @@ body.mobile div.form_layout, body.mobile div#settings.form_layout{
 	max-width:none;
 }
 
+body.mobile div.form_layout div.row{
+	margin: 15px 0;
+}
+
 body.mobile div.form_layout label{
 	display:block;
-	text-align:left;	
-	margin-top:15px;
+	text-align:left;
+	float:none;
+}
+
+body.mobile div.form_layout div.row div.data{
+	display:block;
+	margin-left:0;
 }
 
 body.mobile div.form_layout input.button {
