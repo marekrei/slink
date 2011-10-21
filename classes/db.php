@@ -717,6 +717,7 @@ class DB {
 				  KEY `id` (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;", 
 				DB::safes(Config::get("mysql_prefix")));
+		mysql_query($query);
 		
 		$query = sprintf("INSERT INTO `%susers` (`id`, `username`, `password`, `email`, `time_created`, `time_accessed`, `allowed_admin`) VALUES
 					(1, 'admin', '%s', '', now(), now(), 1);",
