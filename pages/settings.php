@@ -185,7 +185,7 @@ javascript:(
 	<div class="row">
 		<label for="version">Bookmarklet:</label> 
 		<div class="data">
-		<a onclick="alert('Drag this link to your bookmarks.'); return false;" href="javascript:(%20function(){var%20u%20=%20'http://www.siineiolekala.net/slink/demo/index.php?u='%20+%20encodeURIComponent(document.location.href);%20a=function(){%20if(!window.open(u))%20document.location.href=u;%20};%20if(/Firefox/.test(navigator.userAgent))%20setTimeout(a,0);%20else%20a();%20void(0);%20}%20)()">Slink</a>
+		<a onclick="alert('Drag this link to your bookmarks.'); return false;" href="javascript:(%20function(){var%20u%20=%20'<?php print Config::get("url_prefix"); ?>index.php?u='%20+%20encodeURIComponent(document.location.href);%20a=function(){%20if(!window.open(u))%20document.location.href=u;%20};%20if(/Firefox/.test(navigator.userAgent))%20setTimeout(a,0);%20else%20a();%20void(0);%20}%20)()">Slink</a>
 		</div>
 	</div>
 	<div class="row">
