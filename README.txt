@@ -4,7 +4,7 @@
  *
  *             Author : Marek Rei (marek ät siineiolekala dot net)
  *
- *             Version : 0.4 (beta)
+ *             Version : 0.41 (beta)
  *
  *             Last update: 21.10.2011
  *
