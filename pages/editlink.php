@@ -123,6 +123,21 @@ foreach($link->tags as $tag){
 			<input type="submit" value="Save" class="button" />
 		</div>
 	</div>
+	
+<?php
+if(Config::get("allow_sharing")){
+?>
+	<div class="row" id="sharebar">
+		<div class="data">
+		<a href="http://www.facebook.com/sharer/sharer.php?u=<?php print rawurlencode(Config::get("url_prefix").$link->short_url); ?>" target="_blank"><img src="img/media/facebook.png" alt="Facebook" /></a>
+		<a href="http://twitter.com/home?status=<?php print rawurlencode(Config::get("url_prefix").$link->short_url); ?>" target="_blank"><img src="img/media/twitter.png" alt="Twitter" /></a>
+		<a href="mailto:?subject=<?php print rawurlencode($link->title);?>&body=<?php print rawurlencode($link->title);?>
+ <?php print rawurlencode(Config::get("url_prefix").$link->short_url);?>" target="_blank"><img src="img/media/mail.png" alt="E-Mail" /></a>
+		</div>
+	</div>
+<?php
+}
+?>
 </form>
 </div>
 <?php

@@ -34,10 +34,18 @@ if(isset($_GET['checkForUpdate']))
 	die();
 }
 
-if(isset($_GET['mobile']) && $_GET['mobile'] == "true")
+if((isset($_GET['mobile']) && $_GET['mobile'] == "true")){
 	$_SESSION['mobile'] = true;
-if(isset($_GET['mobile']) && $_GET['mobile'] == "false")
+}
+else if(isset($_GET['mobile']) && $_GET['mobile'] == "false"){
 	$_SESSION['mobile'] = false;
+}
+else if(!isset($_SESSION['mobile']) && Config::get("default_view") == 1){
+	$_SESSION['mobile'] = true;
+}
+else if(!isset($_SESSION['mobile'])) {
+	$_SESSION['mobile'] = false;
+}
 
 if(isset($_GET['page']) && is_string($_GET['page']) && strlen($_GET['page']) > 0)
 	$_PAGE = $_GET['page'];

@@ -4,9 +4,9 @@
  *
  *             Author : Marek Rei (marek ät siineiolekala dot net)
  *
- *             Version : 0.41 (beta)
+ *             Version : 0.5 (beta)
  *
- *             Last update: 21.10.2011
+ *             Last update: 7.11.2011
  *
  *             Homepage: www.siineiolekala.net/slink/
  *

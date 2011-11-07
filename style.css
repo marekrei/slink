@@ -27,7 +27,7 @@ h2 {
 
 #frame{
 	text-align:left;
-	max-width:860px;	
+	max-width:980px;	
 	margin:5px auto;
 	border:1px solid #c8c8c8;
 	border-top:none; 
@@ -189,6 +189,8 @@ div#tagfilter{
 table.table_layout {
 	width: 100%;
 	font-size:small;
+	table-layout:fixed;
+	word-wrap:break-word;
 }
 
 table.table_layout td {
@@ -203,7 +205,15 @@ table.table_layout tr.one {
 	background:#e7e7e7;
 }
 
+table.table_layout th.type{
+	width:38px;
+}
+
 table.table_layout th.short_url {
+	width:80px;
+}
+
+table.table_layout th.username {
 	width:80px;
 }
 
@@ -219,6 +229,10 @@ table.table_layout th.functions {
 	width:60px;
 }
 
+table.table_layout td.type {
+	text-align:center;
+}
+
 table.table_layout a.title {
 	display:block;
 }
@@ -232,8 +246,6 @@ table.table_layout a.long_url {
 table.table_layout th.allowed_admin {
 	width:70px;
 }
-
-
 
 div.pagelinks {
 	width:100%;
@@ -366,4 +378,9 @@ ul.list_layout li a span.title:hover{
 
 ul.list_layout span.email{
 	display:block;	
+}
+
+/* SHAREBAR */
+div#sharebar{
+	margin-top:30px;
 }

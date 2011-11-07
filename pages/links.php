@@ -202,7 +202,7 @@ foreach($links as $link)
 	
 	if(!Auth::isMobile()){
 		print "<tr class=\"$row\">";
-		print "<td>".$icon."</td>";
+		print "<td class=\"type\">".$icon."</td>";
 	
 		print "<td><a class=\"title".($link->isValidForThumb()?" thumb":"")."\" href=\"".$link->getMainUrl()."\">".$link->title."</a>
 				<a class=\"long_url".($link->isValidForThumb()?" thumb":"")."\" href=\"".$link->getMainUrl()."\">".$link->getMainUrl()."</a></td>";

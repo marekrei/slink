@@ -732,7 +732,7 @@ class DB {
 					('allow_link_passwords', '1'),
 					('time_format', 'j M Y h:m'),
 					('short_url_length', '2'),
-					('short_url_allowed_characters', '123467890abcdefghijklmnopqrstuvwxyz'),
+					('short_url_allowed_characters', '1234567890abcdefghijklmnopqrstuvwxyz'),
 					('allow_mirror', '1'),
 					('always_mirror', '1'),
 					('create_mirror_default', '1'),
@@ -741,7 +741,8 @@ class DB {
 					('short_url_random', '0'),
 					('enable_thumbnails', '1'),
 					('allow_tags', '1'),
-					('allow_sharing', '1');",
+					('allow_sharing', '1'),
+					('default_view', '0');",
 					DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
 	}

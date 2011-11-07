@@ -67,6 +67,11 @@ if(isset($_POST['editing']))
 		Config::set("short_url_random", 1);
 	else
 		Config::set("short_url_random", 0);
+	
+	if(isset($_POST['default_view']) && $_POST['default_view'] != null && intval($_POST['default_view']) > 0)
+		Config::set("default_view", intval($_POST['default_view']));
+	else
+		Config::set("default_view", 0);
 		
 	
 	/*if(isset($_POST['url_prefix']) && $_POST['url_prefix'] != null)
@@ -153,6 +158,13 @@ Messenger::show();
 	<div class="row">
 		<label for="allow_mirror">Debugging mode:</label> 
 		<div class="data"><input type="checkbox" name="debug" value="true" id="debug" <?php print (Config::get("debug")?"checked=\"checked\"":""); ?>/></div>
+	</div>
+	<div class="row">
+		<label>Default view:</label> 
+		<div class="data">
+			<input type="radio" name="default_view" value="0" id="debug" <?php print (Config::get("default_view") == 0?"checked=\"checked\"":""); ?> id="default_view_0"/> Desktop
+			<input type="radio" name="default_view" value="1" id="debug" <?php print (Config::get("default_view") == 1?"checked=\"checked\"":""); ?> id="default_view_1"/> Mobile
+		</div>
 	</div>
 	<div class="row">
 		<label for="version">Version:</label> 
