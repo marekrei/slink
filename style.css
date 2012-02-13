@@ -131,6 +131,10 @@ div.form_layout input{
 	border:1px solid #CCCCCC;	
 }
 
+div.form_layout input[type='checkbox'], div.form_layout input[type='radio']{
+	width:auto;
+}
+
 div.form_layout input.checkbox{
 	width:auto;
 	border:0;

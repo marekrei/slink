@@ -9,6 +9,7 @@ class User {
 	var $allowed_admin;
 	var $reset_hash;
 	var $reset_time;
+	var $timezone;
 	
 	function __construct() {
 		$this->id = -1;
@@ -20,6 +21,7 @@ class User {
 		$this->allowed_admin = null;
 		$this->reset_hash = null;
 		$this->reset_time = null;
+		$this->timezone = null;
 	}
 	
 	public function processForm(){
@@ -29,6 +31,8 @@ class User {
 			$this->password = md5($_POST['password']);
 		if(isset($_POST['email']) && strlen($_POST['email']) > 0)
 			$this->email = $_POST['email'];
+		if(isset($_POST['timezone']) && strlen($_POST['timezone']) > 0)
+			$this->timezone = $_POST['timezone'];
 			
 		if(isset($_POST['allowed_admin']) && $_POST['allowed_admin'] == "true")
 			$this->allowed_admin = 1;
@@ -41,12 +45,10 @@ class User {
 	{
 	   $isValid = true;
 	   $atIndex = strrpos($email, "@");
-	   if (is_bool($atIndex) && !$atIndex)
-	   {
+	   if (is_bool($atIndex) && !$atIndex){
 	      $isValid = false;
 	   }
-	   else
-	   {
+	   else{
 	      $domain = substr($email, $atIndex+1);
 	      $local = substr($email, 0, $atIndex);
 	      $localLen = strlen($local);

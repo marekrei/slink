@@ -20,6 +20,7 @@ class ShortUrl {
 	
 	public static function incrementString($string, $pos, $characters)
 	{
+		Messenger::addDebug("Called incrementString() with parameters: ".$string." ".$pos." ");
 		if($pos < 0)
 			return $characters[0].$string;
 		$num = array_search($string[$pos], $characters);
@@ -52,12 +53,12 @@ class ShortUrl {
 		else
 			$new_url = self::incrementString($latest_short_url, strlen($latest_short_url)-1, $char_array);
 		
+		Messenger::addDebug("Trying to use short url: ". $new_url);
+		
 		$count = 0;
-		while(!self::isValid($new_url) || !self::isAvailable($new_url))
-		{
-			$new_url = self::incrementString($new_url, count($new_url)-1, $char_array);
-			if($count++ > 50)
-				break;
+		while(!self::isValid($new_url) || !self::isAvailable($new_url)){
+			$new_url = self::incrementString($new_url, strlen($new_url)-1, $char_array);
+			Messenger::addDebug("The url was not available, generated a new one: " . $new_url);
 		}
 		
 		Config::set("sequential_short_url", $new_url);
@@ -76,7 +77,7 @@ class ShortUrl {
 			$shortUrl = self::generateString($length);
 			if(DB::isShortUrlAvailable($shortUrl))
 				return $shortUrl;
-			if($counter++ > 50)
+			if($counter++ > 100)
 				return null;
 		}
 	}

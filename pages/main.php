@@ -14,8 +14,6 @@ if($_USER != null && (isset($_POST['long_url']) || isset($_FILES['upload_file'])
 	$link->user = $_USER->id;
 	$link->username = $_USER->username;
 
-	$link->short_url = ShortUrl::generate();
-
 	if($link->processForm())
 	{
 		DB::addLink($link);
@@ -88,13 +86,28 @@ if(!$addedLink)
 <div id="main" class="form_layout">
 <?php 
 	if(Config::get("allow_links")){
-	$u = null;
-	if(isset($_GET['u']) && strlen($_GET['u']) > 0)
-		$u = htmlspecialchars($_GET['u']);
+		$value_long_url = null;
+		if(isset($_GET['u']) && strlen($_GET['u']) > 0)
+			$value_long_url = htmlspecialchars($_GET['u']);
+		else if(isset($_POST['long_url']) && strlen($_POST['long_url']) > 0)
+			$value_long_url = htmlspecialchars($_POST['long_url']);
+		
+		$value_short_url = null;
+		if(isset($_POST['short_url']) && strlen($_POST['short_url']) > 0)
+			$value_short_url = htmlspecialchars($_POST['short_url']);
+		
+		$value_link_password = null;
+		if(isset($_POST['link_password']) && strlen($_POST['link_password']) > 0)
+			$value_link_password = htmlspecialchars($_POST['link_password']);
+		
+		$value_link_tags = null;
+		if(isset($_POST['link_tags']) && strlen($_POST['link_tags']) > 0)
+		$value_link_tags = htmlspecialchars($_POST['link_tags']);
+			
 ?>
 	<div class="row">
 		<label for="long_url">URL:</label>
-		<div class="data"><input type="text" name="long_url" value="<?php print $u!=null?$u:""; ?>" id="long_url" /></div>
+		<div class="data"><input type="text" name="long_url" value="<?php print $value_long_url!=null?$value_long_url:""; ?>" id="long_url" /></div>
 	</div>
 <?php 
 	}
@@ -109,7 +122,7 @@ if(!$addedLink)
 ?>
 	<div class="row">
 		<label for="short_url">Short URL (opt):</label>
-		<div class="data"><input type="text" name="short_url" value="" id="short_url" />
+		<div class="data"><input type="text" name="short_url" value="<?php print $value_short_url!=null?$value_short_url:""; ?>" id="short_url" />
 <?php /*
 		<input type="text" name="short_url" value="<?php print $newShortUrl; ?>" id="short_url" class="initial" />
 		<input type="hidden" id="url_prefix" name="url_prefix" value="<?php print Config::get("url_prefix"); ?>" />
@@ -125,7 +138,7 @@ if(!$addedLink)
 	<div class="row">
 		<label for="link_password">Link Password (opt):</label>
 		<div class="data">
-			<input type="password" name="link_password" value="" id="link_password" />
+			<input type="password" name="link_password" value="<?php print $value_link_password!=null?$value_link_password:""; ?>" id="link_password" />
 		</div>
 	</div>
 <?php 
@@ -134,7 +147,7 @@ if(!$addedLink)
 ?>
 	<div class="row">
 		<label for="link_tags">Tags:</label>
-		<div class="data"><input type="text" name="link_tags" value="" id="link_tags" /></div>
+		<div class="data"><input type="text" name="link_tags" value="<?php print $value_link_tags!=null?$value_link_tags:""; ?>" id="link_tags" /></div>
 	</div>
 <?php 
 	}

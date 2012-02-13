@@ -57,6 +57,7 @@ if($_USER != null)
 	if(isset($_GET['tag']))
 		$tag_name = $_GET['tag'];
 	
+	Messenger::addDebug("Tag name: ".$tag_name);
 	$links = DB::getLinks($user_id, $type, null, $tag_name, $sort_by, $sort_as, $pnum, $items_per_pnum);
 		
 ?>
@@ -97,6 +98,7 @@ if(Config::get("allow_tags")){
 		print "<input type=\"hidden\" name=\"page\" value=\"links\" />";
 		print "<select name=\"tag\" id=\"tag\">";
 		print "<option value=\"\">-</option>";
+		print "<option value=\"-1\"" .($tag_name=="-1"?" selected=\"selected\"":"").">No Tags</option>";
 		foreach($tags as $tag)
 			print "<option value=\"".htmlspecialchars($tag)."\" ".($tag_name==$tag?"selected=\"selected\"":"").">".htmlspecialchars($tag)."</option>";
 		print "</select>";
@@ -219,7 +221,7 @@ foreach($links as $link)
 				print "<td><img src=\"img/icon_public.png\" alt=\"public\" /></td>";
 		}*/
 		print "<td>".$link->username."</td>";
-		print "<td>".date(Config::get("time_format"), $link->time_created)."</td>";
+		print "<td>".TimeManager::getTimeText($link->time_created, $_USER->timezone)."</td>";
 		print "<td><a href=\"?page=editlink&id=".$link->id."\" class=\"editlink\"><img src=\"img/icon_edit3.png\" alt=\"edit\" /></a> <a href=\"?page=links&user=$user_id&type=$type&del=".$link->id."\"  class=\"deletelink\"><img src=\"img/icon_delete3.png\" alt=\"delete\" /></a><span class=\"hidden link_id\">".$link->id."</span></td>";
 		print "</tr>";
 	}
@@ -232,7 +234,7 @@ foreach($links as $link)
 		print "</span>";
 		print "<span class=\"short_url\">Short URL: ".$link->short_url."</span>";
 		print "<span class=\"username\">".$link->username.", </span>";
-		print "<span class=\"time_created\">".date(Config::get("time_format"), $link->time_created)."</span>";
+		print "<span class=\"time_created\">".TimeManager::getTimeText($link->time_created, $_USER->timezone)."</span>";
 		
 		print "</a></li>";
 	}

@@ -3,12 +3,14 @@
  *             Slink - Short Link Manager
  *
  *             Author : Marek Rei (marek ät siineiolekala dot net)
+ *             Idea from : Jesse Tuttle (ltdjesse ät yahoo dot com)
  *
- *             Version : 0.5 (beta)
+ *             Version : 0.6 (beta)
  *
- *             Last update: 7.11.2011
+ *             Last update : 13.02.2012
  *
- *             Homepage: www.siineiolekala.net/slink/
+ *             Homepage : www.marekrei.com/slink/
+ *             Git repository : https://github.com/marekrei/slink
  *
  *             
  *   Slink is a short link management software written in PHP
@@ -18,11 +20,15 @@
  *
  ***************************************************************************
  *
- *   This is free software and it's distributed under GPL Licence.
+ *   This software is distributed under the GNU Affero General 
+ *   Public License version 3. It is distributed in the hope that it 
+ *   will be useful, but WITHOUT ANY WARRANTY; without even the 
+ *   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ *   PURPOSE. The authors are not responsible for how it performs (or doesn't).
+ *   See the GNU Affero General Public License for more details.
  *
- *   Encode Explorer is written in the hopes that it can be useful to people.
- *   It has NO WARRANTY and when you use it, the author is not responsible
- *   for how it works (or doesn't).
+ *   You should have received a copy of the GNU Affero General Public License 
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  *   
  *   The icon images belong to Tango Icon Library
  *   http://tango.freedesktop.org/Tango_Icon_Library
@@ -30,10 +36,11 @@
  *   Social media icons by ristaumedia
  *   http://ristaumedia.deviantart.com/art/Social-Media-Icons-Volume-2-176762480
  *
- *   Manual
  *
- *   Copy config.example.php to config.php and set the values inside
- *   Put the files to a web server with mysql access
- *   Go to yourserveraddress/install.php
+ *   Manual:
+ *
+ *   1. Copy config.example.php to config.php and set the values inside
+ *   2. Put the files to a web server with mysql access
+ *   3. Go to yourserveraddress/install.php
  *
 \***************************************************************************/

@@ -20,6 +20,8 @@ if(isset($_GET['page']) && $_GET['page'] == "edituser"
 			Messenger::addBad("Not a valid e-mail address");
 		else if(isset($_POST['email']) && $_POST['email'] != null && strlen($_POST['email']) > 0 && $_POST['email'] != $user->email && !User::isEmailAvailable($_POST['email']))
 			Messenger::addBad("E-mail address is already in use");
+		else if(!array_key_exists($_POST['timezone'], TimeManager::getTimezones()))
+			Messenger::addBad("The time zone is not valid");
 		else 
 		{
 			if(Auth::isAllowedAdmin())
@@ -30,7 +32,11 @@ if(isset($_GET['page']) && $_GET['page'] == "edituser"
 				$user->password = md5($_POST['password']);
 				Auth::updatePassword($_POST['password']);
 			}
+			
 			$user->email = $_POST['email'];
+			
+			$user->timezone = $_POST['timezone'];
+			
 			if(Auth::isAllowedAdmin()) {
 				if(isset($_POST['allowed_admin']) && $_POST['allowed_admin'] == "true")
 					$user->allowed_admin = 1;
@@ -64,12 +70,59 @@ if(isset($_GET['page']) && $_GET['page'] == "edituser"
 		<label for="email">E-mail:</label>
 		<div class="data"><input type="text" name="email" id="email" value="<?php print $user->email; ?>" /> </div>
 	</div>
+	<div class="row">
+		<label for="email">Timezone:</label>
+		<div class="data">
+			<select name="timezone">
+				<?php 
+					if($user->timezone == null || strlen($user->timezone) <= 0)
+						print "<option value=\"\">-</option>";
+					foreach(TimeManager::getTimezones() as $timezone_key => $timezone_value){
+						print "<option value=\"".$timezone_key."\"";
+						if($user->timezone == $timezone_key)
+							print " selected=\"selected\"";
+						print ">".$timezone_value."</option>";	
+					}
+				?>
+			</select>
+		</div>
+	</div>
 <?php 
 if(Auth::isAllowedAdmin()) {
 ?>
 	<div class="row">
 		<label for="allowed_admin">Is admin:</label>
 		<div class="data"><input type="checkbox" name="allowed_admin" value="true" id="allowed_admin" <?php print $user->allowed_admin==1?"checked=\"checked\"":""; ?> /></div>
+	</div>
+<?php 
+}
+?>
+
+<?php
+/*
+Bookmarklet in a more readable version:
+javascript:(
+	function(){
+		alert('hey');
+		var u = 'http://www.siineiolekala.net/slink/demo/index.php?u=' + encodeURIComponent(document.location.href);
+		a=function(){
+			if(!window.open(u))
+				document.location.href=u;
+		};
+		if(/Firefox/.test(navigator.userAgent))
+			setTimeout(a,0);
+		else a();
+		void(0);
+	}
+)()
+*/
+if($user->id == $_USER->id){
+?>
+	<div class="row">
+		<label for="bookmarklet">Bookmarklet:</label> 
+		<div class="data">
+		<a onclick="alert('Drag this link to your bookmarks.'); return false;" href="javascript:(%20function(){var%20u%20=%20'<?php print Config::get("url_prefix"); ?>index.php?u='%20+%20encodeURIComponent(document.location.href);%20a=function(){%20if(!window.open(u))%20document.location.href=u;%20};%20if(/Firefox/.test(navigator.userAgent))%20setTimeout(a,0);%20else%20a();%20void(0);%20}%20)()">Slink</a>
+		</div>
 	</div>
 <?php 
 }

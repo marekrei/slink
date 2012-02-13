@@ -93,8 +93,7 @@ class Link {
 		
 		if($this->short_url == null || strlen($this->short_url) == 0)
 		{
-			Messenger::addBad("Short URL needs to be set");
-			return false;
+			$this->short_url = ShortUrl::generate();
 		}
 		
 		// Checking password	

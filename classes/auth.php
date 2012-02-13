@@ -73,6 +73,7 @@ class Auth {
 			$_SESSION['password'] = md5($_POST['password']);
 			if(isset($_POST['remember_me']) && $_POST['remember_me'] == "true")
 				self::setPersistentCookie();
+			DB::countUserAccess($usr);
 			return true;
 		}
 		else if(isset($_COOKIE) && isset($_COOKIE[Config::get("cookie_prefix")."username"]) && isset($_COOKIE[Config::get("cookie_prefix")."password"]))

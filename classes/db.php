@@ -38,11 +38,12 @@ class DB {
 		$user->username = $array['username'];
 		$user->password = $array['password'];
 		$user->email = $array['email'];
-		$user->time_created = strtotime($array['time_created']);
-		$user->time_accessed = strtotime($array['time_accessed']);
+		$user->timezone = $array['timezone'];
+		$user->time_created = $array['time_created'];
+		$user->time_accessed = $array['time_accessed'];
 		$user->allowed_admin = $array['allowed_admin'];
 		$user->reset_hash = $array['reset_hash'];
-		$user->reset_time = strtotime($array['reset_time']);
+		$user->reset_time = $array['reset_time'];
 		return $user;
 	}
 	
@@ -61,8 +62,8 @@ class DB {
 		$link->user = (int)$array['user'];
 		if(key_exists('username', $array))
 			$link->username = $array['username'];
-		$link->time_created = strtotime($array['time_created']);
-		$link->time_accessed = strtotime($array['time_accessed']);
+		$link->time_created = $array['time_created'];
+		$link->time_accessed = $array['time_accessed'];
 		$link->count_accessed = $array['count_accessed'];
 		return $link;
 	}
@@ -139,9 +140,10 @@ class DB {
 		$query .= "username='".DB::safes($user->username)."', ";
 		$query .= "password='".DB::safes($user->password)."', ";
 		$query .= "email='".DB::safes($user->email)."', ";
+		$query .= "timezone='".DB::safes($user->timezone)."', ";
 		$query .= "allowed_admin=".DB::safei($user->allowed_admin).", ";
-		$query .= "time_created=now(), ";
-		$query .= "time_accessed=now() ";
+		$query .= "time_created=UTC_TIMESTAMP(), ";
+		$query .= "time_accessed=UTC_TIMESTAMP() ";
 
 		Messenger::addDebug("MYSQL: ".$query);
 		mysql_query($query);
@@ -154,10 +156,11 @@ class DB {
 		if($user->password != null && strlen($user->password) > 0)
 			$query .= "password='".DB::safes($user->password)."', ";
 		$query .= "email='".DB::safes($user->email)."', ";
-		if($user->reset_hash != null)
+		$query .= "timezone='".DB::safes($user->timezone)."', ";
+		if($user->reset_hash != null){
 			$query .= "reset_hash='".DB::safes($user->reset_hash)."', ";
-		if($user->reset_time != null)
-			$query .= "reset_time='".date( 'Y-m-d H:i:s', $user->reset_time )."', ";
+			$query .= "reset_time=UTC_TIMESTAMP(), ";
+		}
 		$query .= "allowed_admin=".DB::safei($user->allowed_admin)." ";
 		$query .= "WHERE id=".DB::safei($user->id);
 
@@ -298,8 +301,7 @@ class DB {
 		$query .= "user=".DB::safei($link->user).", ";
 		if($link->password != null && strlen($link->password) > 0)
 			$query .= "password='".DB::safes($link->password)."', ";
-		$query .= "time_created=now(), ";
-		$query .= "time_accessed=now(), ";
+		$query .= "time_created=UTC_TIMESTAMP(), ";
 		$query .= "count_accessed=0";
 		
 		Messenger::addDebug("MYSQL: ".$query);
@@ -393,12 +395,15 @@ class DB {
 		
 		if($tag_name != null && strlen(trim($tag_name)) > 0){
 			$tag_id = DB::getTagId($tag_name);
-			if($tag_id != null){
-				$query .= sprintf("JOIN %stags ON %slinks.id = %stags.link_id ",
+			if($tag_id != null || $tag_name == "-1"){
+				$query .= sprintf("LEFT JOIN %stags ON %slinks.id = %stags.link_id ",
 				DB::safes(Config::get("mysql_prefix")),
 				DB::safes(Config::get("mysql_prefix")),
 				DB::safes(Config::get("mysql_prefix")));
-				$conditions[] = sprintf("%stags.tag_id = %d", DB::safes(Config::get("mysql_prefix")), $tag_id);
+				if($tag_id == null && $tag_name == "-1")
+					$conditions[] = sprintf("%stags.tag_id IS NULL", DB::safes(Config::get("mysql_prefix")));
+				else
+					$conditions[] = sprintf("%stags.tag_id = %d", DB::safes(Config::get("mysql_prefix")), $tag_id);
 			}
 		}
 		
@@ -520,10 +525,18 @@ class DB {
 	
 	public static function countLinkAccess($link)
 	{
-		$query = sprintf("UPDATE %slinks set time_accessed=now(), count_accessed=count_accessed+1 where id=%d and short_url='%s'",
+		$query = sprintf("UPDATE %slinks set time_accessed=UTC_TIMESTAMP(), count_accessed=count_accessed+1 where id=%d and short_url='%s'",
 			DB::safes(Config::get("mysql_prefix")),
 			DB::safei($link->id),
 			DB::safes($link->short_url));
+		mysql_query($query);
+	}
+	
+	public static function countUserAccess($user)
+	{
+		$query = sprintf("UPDATE %susers set time_accessed=UTC_TIMESTAMP() where id=%d",
+		DB::safes(Config::get("mysql_prefix")),
+		DB::safei($user->id));
 		mysql_query($query);
 	}
 	
@@ -657,7 +670,7 @@ class DB {
 		return $tagnames;
 	}
 	
-	public static function install($password){
+	public static function install(){
 		$query = sprintf("CREATE TABLE IF NOT EXISTS `%ssettings` (
 					  `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `value` text COLLATE utf8_unicode_ci NOT NULL,
@@ -675,8 +688,8 @@ class DB {
 					  `type` int(9) NOT NULL,
 					  `password` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `user` int(9) NOT NULL,
-					  `time_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-					  `time_accessed` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+					  `time_created` datetime NOT NULL,
+		  			  `time_accessed` datetime DEFAULT NULL,
 					  `count_accessed` int(9) NOT NULL,
 					  `file_size` bigint(32) NOT NULL,
 					  `file_type` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
@@ -690,11 +703,12 @@ class DB {
 					  `username` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `password` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
 					  `email` text COLLATE utf8_unicode_ci NOT NULL,
-					  `time_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-					  `time_accessed` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+					  `timezone` varchar(32) COLLATE utf8_unicode_ci,
+					  `time_created` datetime NOT NULL,
+					  `time_accessed` datetime NOT NULL,
 					  `allowed_admin` tinyint(1) NOT NULL,
-					  `reset_hash` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-					  `reset_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+					  `reset_hash` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+					  `reset_time` datetime DEFAULT NULL,
 					  PRIMARY KEY (`id`)
 					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
 					DB::safes(Config::get("mysql_prefix")));
@@ -703,8 +717,7 @@ class DB {
 		$query = sprintf("CREATE TABLE IF NOT EXISTS `%stagnames` (
 					  `id` int(11) NOT NULL AUTO_INCREMENT,
 					  `name` varchar(32) NOT NULL,
-					  PRIMARY KEY (`id`),
-					  KEY `id` (`id`)
+					  PRIMARY KEY (`id`)
 					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci",
 					DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
@@ -719,18 +732,12 @@ class DB {
 				DB::safes(Config::get("mysql_prefix")));
 		mysql_query($query);
 		
-		$query = sprintf("INSERT INTO `%susers` (`id`, `username`, `password`, `email`, `time_created`, `time_accessed`, `allowed_admin`) VALUES
-					(1, 'admin', '%s', '', now(), now(), 1);",
-					DB::safes(Config::get("mysql_prefix")),
-					DB::safes($password));
-		mysql_query($query);
-		
 		$query = sprintf("INSERT INTO `%ssettings` (`name`, `value`) VALUES
 					('allow_links', '1'),
 					('allow_files', '1'),
 					('items_per_page', '20'),
 					('allow_link_passwords', '1'),
-					('time_format', 'j M Y h:m'),
+					('time_format', 'j M Y H:i'),
 					('short_url_length', '2'),
 					('short_url_allowed_characters', '1234567890abcdefghijklmnopqrstuvwxyz'),
 					('allow_mirror', '1'),
@@ -742,8 +749,10 @@ class DB {
 					('enable_thumbnails', '1'),
 					('allow_tags', '1'),
 					('allow_sharing', '1'),
-					('default_view', '0');",
-					DB::safes(Config::get("mysql_prefix")));
+					('default_view', '0'),
+					('db_version', '%s');",
+					DB::safes(Config::get("mysql_prefix")),
+					DB::safes("".Config::get("version")));
 		mysql_query($query);
 	}
 }

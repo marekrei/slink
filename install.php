@@ -7,11 +7,13 @@ if (!file_exists("config.php")) {
 	print "./config.php is required but not found";
 	die();
 }
-include "config.php";
-include "classes/config.php";
-include "classes/db.php";
-include "classes/filemanager.php";
-include 'classes/messenger.php';
+
+require_once "config.php";
+require_once "classes/config.php";
+require_once "classes/db.php";
+require_once "classes/messenger.php";
+require_once "classes/filemanager.php";
+require_once "classes/user.php";
 DB::connect();
 
 if(!DB::isInstalled())
@@ -22,13 +24,22 @@ if(!DB::isInstalled())
 	for ($i = 0; $i < $length; $i++) {
         $password .= $characters[mt_rand(0, strlen($characters)-1)];
     }
-	DB::install(md5($password));
+	
+    DB::install();
+	
+	$admin = new User();
+	$admin->username = "admin";
+	$admin->password = md5($password);
+	$admin->allowed_admin = 1;
+	DB::addUser($admin);
+	
 	FileManager::initUser("admin");
 	FileManager::createHtAccess(".htaccess");
 	print "<div style=\"text-aling:center\">";
 	print "Script successfully installed<br \>\n";
 	print "Username: admin<br \>\n";
 	print "Password: ".$password."<br \>\n";
+	print "You can delete install.php now.<br />\n";
 	print "<a href=\"index.php\">Go to main page</a>";
 	print "<div>";
 }

@@ -2,19 +2,22 @@
 ini_set('display_errors',1);
 error_reporting(E_ALL|E_STRICT);
 
+date_default_timezone_set('UTC');
+
 if (!file_exists("config.php")) {
 	print "./config.php is required but not found";
 	die();
 }
-include "config.php";
-include "classes/config.php";
-include "classes/db.php";
-include "classes/messenger.php";
-include "classes/router.php";
-include "classes/link.php";
-include "classes/filemanager.php";
-include "classes/user.php";
-include "classes/auth.php";
+require_once "config.php";
+require_once "classes/config.php";
+require_once "classes/timemanager.php";
+require_once "classes/db.php";
+require_once "classes/messenger.php";
+require_once "classes/router.php";
+require_once "classes/link.php";
+require_once "classes/filemanager.php";
+require_once "classes/user.php";
+require_once "classes/auth.php";
 
 DB::connect();
 Config::init();

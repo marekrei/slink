@@ -4,7 +4,7 @@ if(isset($_GET) && isset($_GET['hash']) && strlen($_GET['hash']) > 0)
 {
 	$user = DB::getUser(null, null, null, $_GET['hash']);
 	if($user != null) {
-		if($user->reset_time + Config::get("reset_time_limit") > time()) {
+		if(strtotime($user->reset_time) + Config::get("reset_time_limit") > time()) {
 			if(isset($_POST['password']) && strlen($_POST['password']) > 0){
 				$user->password = md5($_POST['password']);
 				DB::editUser($user);
@@ -34,9 +34,7 @@ else if(isset($_POST) && isset($_POST['email']) && strlen($_POST['email']) > 0){
 			DB::editUser($user);
 			
 			$url = Config::get("url_prefix")."index.php?page=resetpass&hash=".$hash;
-			$message = "Someone requested to reset Your password at ".Config::get("url_prefix")."\n
-			To set a new password, go to the following page:\n
-			".$url."";
+			$message = "Someone requested to reset Your password at ".Config::get("url_prefix")."\nTo set a new password, go to the following page:\n".$url."";
 			$email = $user->email;
 			$title = "Slink password recovery";
 			Messenger::addDebug("Sending password recovery e-mail to ".$email);

@@ -78,7 +78,7 @@ foreach($users as $user)
 			print "<td><img src=\"img/icon_yes.png\" alt=\"yes\" /></td>";
 		else
 			print "<td><img src=\"img/icon_no.png\" alt=\"no\" /></td>";
-		print "<td>".date(Config::get("time_format"), $user->time_created)."</td>";
+		print "<td>".TimeManager::getTimeText($user->time_created, $_USER->timezone)."</td>";
 		print "<td><a href=\"?page=edituser&id=".$user->id."\" class=\"edituser\"><img src=\"img/icon_edit3.png\" alt=\"edit\" /></a> <a href=\"?page=users&del=".$user->id."\" class=\"deleteuser\"><img src=\"img/icon_delete3.png\" alt=\"delete\" /></a></td>";
 		print "</tr>";
 	}
