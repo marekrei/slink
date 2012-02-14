@@ -35,7 +35,8 @@ if($addedLink)
 	<div class="row">
 		<label for="short_url_done">URL:</label>
 		<div class="data">		
-			<input type="text" readonly="readonly" name="short_url_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>" id="short_url_done" />
+			<!-- readonly="readonly"  -->
+			<input type="text" name="short_url_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>" id="short_url_done" />
 		</div>
 	</div>
 	
@@ -46,7 +47,7 @@ if($link->isMirrored())
 	<div class="row">
 		<label for="mirror_done">Mirror:</label>
 		<div class="data">
-			<input type="text" readonly="readonly" name="mirror_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>!" id="mirror_done" />
+			<input type="text" name="mirror_done" value="<?php print Config::get("url_prefix").$link->short_url; ?>!" id="mirror_done" />
 		</div>
 	</div>
 <?php 

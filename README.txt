@@ -2,12 +2,12 @@
  *
  *             Slink - Short Link Manager
  *
- *             Author : Marek Rei (marek ät siineiolekala dot net)
- *             Idea from : Jesse Tuttle (ltdjesse ät yahoo dot com)
+ *             Author : Marek Rei (marek ät marekrei dot com)
+ *             Idea from : Jesse Tuttle (Jesse ät AwayFromKeyboard dot net)
  *
- *             Version : 0.6 (beta)
+ *             Version : 0.61 (beta)
  *
- *             Last update : 13.02.2012
+ *             Last update : 14.02.2012
  *
  *             Homepage : www.marekrei.com/slink/
  *             Git repository : https://github.com/marekrei/slink
