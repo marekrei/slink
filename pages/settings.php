@@ -162,8 +162,9 @@ Messenger::show();
 	<div class="row">
 		<label>Default view:</label> 
 		<div class="data">
-			<input type="radio" name="default_view" value="0" id="debug" <?php print (Config::get("default_view") == 0?"checked=\"checked\"":""); ?> id="default_view_0"/> Desktop
-			<input type="radio" name="default_view" value="1" id="debug" <?php print (Config::get("default_view") == 1?"checked=\"checked\"":""); ?> id="default_view_1"/> Mobile
+			<input type="radio" name="default_view" value="0" id="default_view" <?php print (Config::get("default_view") == 0?"checked=\"checked\"":""); ?> id="default_view_0"/> Desktop
+			<input type="radio" name="default_view" value="1" id="default_view" <?php print (Config::get("default_view") == 1?"checked=\"checked\"":""); ?> id="default_view_1"/> Mobile
+			<input type="radio" name="default_view" value="2" id="default_view" <?php print (Config::get("default_view") == 2?"checked=\"checked\"":""); ?> id="default_view_2"/> Auto
 		</div>
 	</div>
 	<div class="row">

@@ -14,6 +14,6 @@ if(Auth::isLoggedIn())
 }
 */
 ?>
- | <a href="#">Slink</a>
+ | <a href="http://www.marekrei.com/slink">Slink</a>
 </body>
 </html>

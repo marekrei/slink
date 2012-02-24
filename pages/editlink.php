@@ -34,7 +34,8 @@ if(isset($_GET['page']) && $_GET['page'] == "editlink" && isset($_GET['id']) && 
 	<div class="row">
 		<label>Current URL:</label> 
 		<div class="data">
-			<input type="text" readonly="readonly" name="long_url_done" id="long_url_done" value="<?php print $link->getMainUrl(); ?>" />
+			<!-- Removed the readonly="readonly" attribute as apparently it doesn't let some mobile browsers select text -->
+			<input type="text" name="long_url_done" id="long_url_done" value="<?php print $link->getMainUrl(); ?>" />
 			<a href="<?php print $link->getMainUrl(); ?>" target="_blank" ><img src="img/external_link.gif" alt="go" /></a>
 		</div>
 	</div>		
