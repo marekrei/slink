@@ -56,9 +56,12 @@ class Link {
 	
 	public function isMirrored()
 	{
-		if($this->isLink() && $this->file != null && strlen($this->file) > 0)
+		if($this->isLink() && $this->file != null && strlen($this->file) > 0){
 			return true;
-		return false;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	public function isLink(){

@@ -76,8 +76,8 @@ if(Config::get("allow_mirror") && !Config::get("always_mirror")){
 	<div class="row">
 		<label for="link_password">Create mirror:</label>
 		<div class="data">
-			<input type="radio" name="create_mirror" value="no" <?php print Config::isTrue("create_mirror_default")?"":"checked=\"checked\" "; ?>/> No 
-			<input type="radio" name="create_mirror" value="yes" <?php print Config::isTrue("create_mirror_default")?"checked=\"checked\" ":""; ?>/> Yes
+			<input type="radio" name="create_mirror" value="no" <?php print (($link->isMirrored() == false)?"checked=\"checked\" ":""); ?>/> No 
+			<input type="radio" name="create_mirror" value="yes" <?php print (($link->isMirrored() == true)?"checked=\"checked\" ":""); ?>/> Yes
 		</div>
 	</div>
 <?php 
@@ -87,7 +87,7 @@ if(Config::get("allow_link_passwords")) {
 	<div class="row">
 		<label for="password_protected">Password protected:</label>
 		<div class="data">
-			<input type="radio" name="password_protected" value="no" <?php if(!$link->isProtected()) print "checked "; ?>/> No <input type="radio" name="password_protected" value="yes" <?php if($link->isProtected()) print "checked "; ?>/> Yes
+			<input type="radio" name="password_protected" value="no" <?php if(!$link->isProtected()) print "checked=\"checked\" "; ?>/> No <input type="radio" name="password_protected" value="yes" <?php if($link->isProtected()) print "checked "; ?>/> Yes
 		</div>
 	</div>
 	<div class="row">
