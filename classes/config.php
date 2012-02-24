@@ -1,5 +1,6 @@
 <?php
 class Config {
+	static $version = 0.62;
 	
 	static $conf_int = array("items_per_page", "short_url_length", "default_view");
 	static $conf_string = array("url_prefix", "time_format", "short_url_allowed_characters", "sequential_short_url", "db_version");
@@ -12,7 +13,7 @@ class Config {
 		{
 			$_CONFIG[$key] = $value;
 		}
-		
+		$_CONFIG['version'] = self::$version;
 		if(Config::get("timezone") != null && strlen(Config::get("timezone")) > 0)
 			ini_set('date.timezone', Config::get("timezone"));
 	}
